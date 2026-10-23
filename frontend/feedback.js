@@ -11,6 +11,10 @@ async function getFeedback() {
         const data = await response.json();
         feedbackList.innerHTML = "";
 
+        if (data.length === 0) {
+            feedbackList.textContent = "No feedback submitted yet.";
+            return;
+        }
         data.forEach(feedback => {
             const card = document.createElement("div");
             card.className = "feedback-card";
@@ -51,7 +55,7 @@ async function getFeedback() {
                         throw new Error(result.message || "Delete failed");
                     }
 
-                    
+
                     getFeedback();
 
                 } catch (error) {

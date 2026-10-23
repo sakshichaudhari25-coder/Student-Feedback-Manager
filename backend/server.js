@@ -2,15 +2,22 @@ import express from "express"
 import dotenv from "dotenv"
 import cors from "cors"
 import mongoose from "mongoose"
-import Feedback from "../models/feedback.js"
+import Feedback from "./models/feedback.js"
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 dotenv.config()
-
 const app=express()
+app.get("/", (req, res) => {
+    res.send("Student Feedback Manager API is running!");
+});
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use(express.static(path.join(__dirname, "../frontend")));
 const PORT = 3000;
 app.use(express.json())
 app.use(cors())
-app.use(express.static("frontend"))
 
 mongoose.connect(process.env.MONGODB_URI)
 .then(()=>{
@@ -52,7 +59,7 @@ app.get("/feedback",async(req,res)=>{
     }
     catch(error){
         console.log("Error fetching feedback:", error);
-        res.sendStatus(500).json({
+        res.status(500).json({
             message:"Failed to fetch feedback"
         })
         
@@ -91,6 +98,8 @@ app.delete("/feedback/:id", async(req,res)=>{
     }
 })
 app.listen(PORT,()=>{
-    console.log(`Server Running on http://localhost:${PORT}`);
+    console.log(`Backend API: http://localhost:${PORT}`);
+    console.log(`Frontend Form: http://localhost:${PORT}/index.html`);
+    console.log(`All Feedback: http://localhost:${PORT}/feedback.html`);
+});
     
-})
